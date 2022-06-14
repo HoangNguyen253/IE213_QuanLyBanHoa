@@ -1,0 +1,6 @@
+HOA(MaHoa, TenHoa, GiaTien, MoTa, HinhAnh, SoLuong, MaLoaiHoa)
+LOAIHOA(MaLoaiHoa, TenLoaiHoa)
+NGUOIDUNG(TenDangNhap, MatKhau, HoTen, Email, DiaChi, SoDienThoai MaLoaiNguoiDung)
+LOAINGUOIDUNG(MaLoaiNguoiDung, TenLoaiNguoiDung)
+DONHANG(MaDonHang, TenDangNhap, TongTien, TrangThai)
+DONHANG_HOA(MaDonHang, MaHoa)
