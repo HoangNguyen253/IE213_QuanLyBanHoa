@@ -458,36 +458,36 @@ app.get('/api/getloaihoabyma', async function (req, res) {
     if (maLoaiHoa == null) {
         response = {
             status: false,
-            maLoaiHoa: maLoaiHoa
+            error: "Hãy nhập mã loại hoa"
         }
         res.send(response);
-    }
-
-    const loaihoaCollection = databaseQLBH.collection("loaihoa");
-    let query = { maloaihoa: { $eq: maLoaiHoa * 1 } };
-    try {
-        let cursor = await loaihoaCollection.find(query);
-        let listLoaiHoa = await cursor.toArray();
-        if (listLoaiHoa.length != 0) {
-            result = listLoaiHoa[0];
-            response = {
-                status: true,
-                loaiHoa: result
+    } else {
+        const loaihoaCollection = databaseQLBH.collection("loaihoa");
+        let query = { maloaihoa: { $eq: maLoaiHoa * 1 } };
+        try {
+            let cursor = await loaihoaCollection.find(query);
+            let listLoaiHoa = await cursor.toArray();
+            if (listLoaiHoa.length != 0) {
+                let result = listLoaiHoa[0];
+                response = {
+                    status: true,
+                    loaiHoa: result
+                }
+                res.send(response);
+            } else {
+                response = {
+                    status: false,
+                    error: "Mã loại hoa không tồn tại."
+                }
+                res.send(response);
             }
-            res.send(response);
-        } else {
+        } catch (e) {
             response = {
                 status: false,
-                error: "Mã loại hoa không tồn tại."
+                error: e
             }
             res.send(response);
         }
-    } catch (e) {
-        response = {
-            status: false,
-            error: e
-        }
-        res.send(response);
     }
 });
 
