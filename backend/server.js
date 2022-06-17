@@ -104,6 +104,28 @@ app.get('/api/hoa', async function (req, res) {
     res.json(response);
 });
 
+//1.1 get list hoa all
+app.get('/api/hoaall', async function (req, res) {
+    let cursor;
+    let hoas = databaseQLBH.collection("hoa");
+    let hoasList = [];
+    let totalNumHoas = 0;
+    try {
+        cursor = await hoas.find();
+        hoasList = await cursor.toArray();
+        totalNumHoas = await hoas.countDocuments();
+    }
+    catch (e) {
+        console.error(`Lỗi lấy danh sách hoa, ${e}`);
+    }
+
+    let response = {
+        hoas: hoasList,
+        total_results: totalNumHoas
+    };
+    res.json(response);
+});
+
 //2. Insert hoa 
 let fileNameUpload;
 let storage = multer.diskStorage({
@@ -758,7 +780,7 @@ app.post('/api/themhoavaogiohang', async function (req, res) {
                         status: true,
                         add: true,
                         message: "Thêm vào giỏ hàng thành công"
-                    }
+                    };
                     res.send(response);
                 }
             } else {
@@ -812,7 +834,6 @@ app.post('/api/themhoavaogiohang', async function (req, res) {
 //2. Get list hoa trong giỏ
 app.get('/api/giohang', async function (req, res) {
     let response;
-    console.log(req.session.gioHang);
     try {
         response = {
             status: true,
@@ -833,17 +854,50 @@ app.post('/api/capnhatgiohang', async function (req, res) {
     let response;
     try {
         let gioHangNew = req.body;
-        req.session.gioHang = [];
-        gioHangNew.forEach(element => {
-            (req.session.gioHang).push(element);
-        });
-        console.log(req.session.gioHang);
-        response = {
-            status: true,
-            message: "Cập nhật thành công"
-        };
-        res.send(response);
-    } catch(e) {
+        let gioHangCur = [];
+        if (gioHangNew) {
+            const hoaCollection = databaseQLBH.collection("hoa");
+            let isOver = -1;
+            let amountAvailable = -1;
+            let amountRequest = -1;
+            let lengthGioHangNew = gioHangNew.length;
+            let cursor = await hoaCollection.find();
+            let listHoa = await cursor.toArray();
+            for (let i = 0; i < lengthGioHangNew; i++) {
+                let soLuongAvailable = 0;
+                for (let j = 0; j < listHoa.length; j++) {
+                    if (gioHangNew[i].maHoa == listHoa[j].mahoa) {
+                        soLuongAvailable = listHoa[j].soluong;
+                    }
+                }
+                if (gioHangNew[i].soLuong * 1 > soLuongAvailable * 1) {
+                    isOver = gioHangNew[i].maHoa;
+                    amountAvailable = soLuongAvailable;
+                    amountRequest = gioHangNew[i].soLuong;
+                    break;
+                } else {
+                    gioHangCur.push(gioHangNew[i]);
+                }
+            }
+            if (isOver * 1 == -1) {
+                req.session.gioHang = gioHangCur;
+                response = {
+                    status: true,
+                    message: "Cập nhật thành công"
+                };
+                res.send(response);
+            } else {
+                response = {
+                    status: false,
+                    message: "Mã hoa có số lượng có sẵn",
+                    maHoa: isOver * 1,
+                    available: amountAvailable * 1,
+                    request: amountRequest * 1
+                };
+                res.send(response);
+            }
+        }
+    } catch (e) {
         response = {
             status: false,
             message: "Cập nhật thất bại",
@@ -856,6 +910,206 @@ app.post('/api/capnhatgiohang', async function (req, res) {
 
 /*END ====================GIOHANG API======================*/
 
+/*START ====================DONHANG API======================*/
+//1. Thêm đơn hàng -> Thanh toán
+app.post('/api/thanhtoan', async function (req, res) {
+    const donHang = req.body;
+    const diaChi = donHang.diaChi;
+    const tongTien = donHang.tongTien;
+    const ctdh = donHang.ctdh;
+
+    const donHangCollection = databaseQLBH.collection("donhang");
+    let response;
+    try {
+        if (req.session.nguoiDung == undefined) {
+            response = {
+                status: false,
+                error: "Chưa đăng nhập"
+            }
+            res.send(response);
+        } else {
+            let time = new Date();
+            let timeString = time.getFullYear() + "-" +
+                (time.getMonth() + 1) + "-" +
+                time.getDate() + "T" +
+                time.getHours() + ":" +
+                time.getMinutes() + ":" +
+                time.getSeconds();
+            let donHangOBJ = {
+                tendangnhap: req.session.nguoiDung.tendangnhap,
+                diachi: diaChi,
+                tongtien: tongTien * 1,
+                thoigiandat: timeString,
+                trangthai: 1,
+                ctdh: ctdh
+            }
+            await donHangCollection.insertOne(donHangOBJ);
+            response = {
+                status: true,
+                message: "Thanh toán thành công"
+            }
+            res.send(response);
+        }
+
+    } catch (e) {
+        response = {
+            status: false,
+            error: e
+        }
+        res.send(response);
+    }
+});
+
+//2. Get list đơn hàng theo trang
+app.get('/api/quanlydonhang', async function (req, res) {
+    const donhangPerPage = req.query.donhangPerPage ? parseInt(req.query.donhangPerPage) : 10;
+    const page = req.query.page ? parseInt(req.query.page) : 0;
+
+    let query;
+    if (req.query.trangThai) {
+        query = {trangthai : {$eq: req.query.trangThai*1}}
+    }
+
+    let cursor;
+    let donHangCollection = databaseQLBH.collection("donhang");
+    let donHangList = [];
+    let totalNumDonHang = 0;
+    try {
+        cursor = await donHangCollection.find(query).limit(donhangPerPage).skip(donhangPerPage * page);
+        donHangList = await cursor.toArray();
+        totalNumDonHang = await donHangCollection.countDocuments(query);
+    }
+    catch (e) {
+        console.error(`Lỗi lấy danh sách hoa, ${e}`);
+    }
+
+    let response = {
+        donHangList: donHangList,
+        page: page,
+        trangThai: req.query.trangThai,
+        entries_per_page: donhangPerPage,
+        total_results: totalNumDonHang,
+    };
+    res.json(response);
+});
+
+//3. Sửa đơn hàng: Trạng thái(1: vừa đặt, 2: hủy đơn, 3: đang giao, 4: hoàn thành)
+app.post('/api/suadonhang', async function (req, res) {
+    const maDonHang = req.query.maDonHang;
+    const trangThaiMoi = req.query.trangThai;
+
+    let response;
+    if (maDonHang== null || trangThaiMoi == null) {
+        response = {
+            status: false,
+            error: "Hãy nhập đầy đủ các trường"
+        };
+        res.send(response);
+    } else {
+        const donHangCollection = databaseQLBH.collection("donhang");
+        let filter = {madonhang: {$eq: maDonHang*1}};
+        let updateDoc = {
+            $set: {
+                trangthai: trangThaiMoi*1
+            }
+        }
+        try {
+            await donHangCollection.updateOne(filter, updateDoc);
+            response = {
+                status: true,
+                message: "Sửa trạng thái thành công"
+            }; 
+            res.send(response);
+        } catch(e) {
+            response = {
+                status: false,
+                error: e
+            }; 
+            res.send(response);
+        }
+    }
+});
+
+//4. Get chi tiết đơn hàng từ mã đơn hàng
+app.get('/api/chitietdonhang', async function(req, res) {
+    const maDonHang = req.query.maDonHang;
+
+    let response;
+    if (maDonHang == null) {
+        response = {
+            status: false,
+            error: "Nhập mã đơn hàng"
+        }; 
+        res.send(response);
+    } else {
+        try {
+            const donHangCollection = databaseQLBH.collection("donhang");
+            let query = {madonhang: {$eq: maDonHang*1}};
+            let donHang = await donHangCollection.findOne(query);
+            if (donHang == null) {
+                response = {
+                    status: false,
+                    error: "Mã đơn hàng không tồn tại"
+                }; 
+                res.send(response);
+            } else {
+                response = {
+                    status: true,
+                    donHang: donHang
+                }; 
+                res.send(response);
+            }
+        } catch(e) {
+            response = {
+                status: false,
+                error: e
+            }; 
+            res.send(response);
+        }
+        
+    }
+});
+
+//5. Get list đơn hàng theo trang, tên đăng nhập (dành cho theo dõi các đơn hàng của 1 khách)
+app.get('/api/donhangnguoidung', async function (req, res) {
+    const donhangPerPage = req.query.donhangPerPage ? parseInt(req.query.donhangPerPage) : 10;
+    const page = req.query.page ? parseInt(req.query.page) : 0;
+
+    let response;
+    if (req.session.nguoiDung == undefined) {
+        response = {
+            status: false,
+            error: "Chưa đăng nhập"
+        }; 
+        res.send(response);
+    } else {
+        let query = {tendangnhap : {$eq: req.session.nguoiDung.tendangnhap}}
+    
+        let cursor;
+        let donHangCollection = databaseQLBH.collection("donhang");
+        let donHangList = [];
+        let totalNumDonHang = 0;
+        try {
+            cursor = await donHangCollection.find(query).limit(donhangPerPage).skip(donhangPerPage * page);
+            donHangList = await cursor.toArray();
+            totalNumDonHang = await donHangCollection.countDocuments(query);
+        }
+        catch (e) {
+            console.error(`Lỗi lấy danh sách hoa, ${e}`);
+        }
+    
+        response = {
+            donHangList: donHangList,
+            page: page,
+            tenDangNhap: req.session.nguoiDung.tendangnhap,
+            entries_per_page: donhangPerPage,
+            total_results: totalNumDonHang,
+        };
+        res.json(response);
+    }   
+});
+
+/*END ====================DONHANG API======================*/
 app.use('*', (req, res) => {
     res.status(404).json({ error: "not found" });
 });
