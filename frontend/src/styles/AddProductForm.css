@@ -1,0 +1,68 @@
+.addProductFormContainer {
+    background-color: white;
+    width: 60vw;
+    margin: 20px;
+    padding-top: 10px;
+    border-radius: 10px;
+    /* background-image: url('../assets/Background_Form.jpg');
+    background-repeat: no-repeat;
+    background-size: cover; */
+    position: relative;
+}
+.addProductFormContainer::before {    
+    content: "";
+    background-image: url('../assets/Background_Form.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    opacity: 0.45;
+    border-radius: 10px;
+}
+.addProductFormContainer h2, .addProductFormContainer button {
+    position: relative;
+}
+.addProductForm {
+    position: relative;
+    display: grid;
+    place-content: center;
+}
+.addProductData {
+    display: flex;
+    align-items: center;
+    place-content: center;
+    width: 100%;
+}
+.addProductData p {
+    text-align: left;
+    width: 35%;
+}
+.addProductData input {
+    height: 22px;
+    width: 65%;
+    border: 1px solid black;
+}
+.addProductData select {
+    height: 27px;
+    width: 65%;
+    border: 1px solid black;
+}
+
+.addProductFormContainer button {
+    height: 35px;
+    width: 200px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    background-color: #218500;
+    color: white;
+    font-weight: 700;
+    border: 1px solid #218500;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.addProductFormContainer button:hover {
+    background-color: black;
+}

@@ -1,0 +1,63 @@
+.signupFormContainer {
+    background-color: white;
+    width: 60vw;
+    margin: 20px;
+    padding-top: 10px;
+    border-radius: 10px;
+    /* background-image: url('../assets/Background_Form.jpg');
+    background-repeat: no-repeat;
+    background-size: cover; */
+    position: relative;
+}
+.signupFormContainer::before {    
+    content: "";
+    background-image: url('../assets/Background_Form.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    opacity: 0.45;
+    border-radius: 10px;
+}
+.signupFormContainer h2, .signupFormContainer button {
+    position: relative;
+}
+.signupForm {
+    position: relative;
+    display: grid;
+    place-content: center;
+}
+.signupData {
+    display: flex;
+    align-items: center;
+    place-content: center;
+    width: 500px;
+}
+.signupData p {
+    text-align: left;
+    width: 35%;
+}
+.signupData input {
+    height: 22px;
+    width: 40%;
+    border: 1px solid black;
+}
+
+.signupFormContainer button {
+    height: 35px;
+    width: 200px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    background-color: #218500;
+    color: white;
+    font-weight: 700;
+    border: 1px solid #218500;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.signupFormContainer button:hover {
+    background-color: black;
+}

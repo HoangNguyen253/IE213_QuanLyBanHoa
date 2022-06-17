@@ -1,0 +1,170 @@
+.listFloContainer {
+    width: 100%;
+    height: auto;
+    /* display: flex;
+    justify-content: center;
+    align-items: center; */
+    display: grid;
+    grid-template-columns: 0.4fr 1.6fr;
+    place-items: center;
+    background-color: #c6d8c0;
+  }
+  /* .listFloContainer .menuTitle {
+    font-size: 30px;
+  } */
+  .listFloField {
+    background-color: white;
+    margin-top: 40px;
+    padding-top: 25px;
+    padding-bottom: 25px;
+    border-radius: 10px;
+  }
+  .listFlo {
+    width: 50vw;
+    height: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    place-items: center;
+  }
+  .listCategory {
+    background-color: white;
+    font-size: 20px;
+    place-self: start;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 50px;
+    margin-left: 50px;
+    font-weight: 700;
+    width: 80%;
+  }
+  .groupName {
+    height: 35px;
+    margin: 10px;
+    text-align: center;
+    display: block;
+    text-decoration: none;
+    color: black;
+    border-radius: 10px;
+    justify-content: center;
+    line-height: 35px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    font-size: 16px;
+    border: 1px solid rgb(165, 165, 165);
+  }
+  .groupName.chosenCategory {
+    background-color: #218500;
+    color: white;
+  }
+  .groupName:hover {
+    background-color: #218500;
+    color: white;
+  }
+  
+  /* MENU ITEM STYLING */
+  
+  .listItem {
+    border-radius: 15px;
+    width: 200px;
+    height: 300px;
+    margin: 10px;
+    box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.2);
+  }
+  .listItem:hover {
+    box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.5);
+    transition: 0.3s ease-in;
+    cursor: pointer;
+  }
+  
+  .listItem div.imgItem {
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    width: 100%;
+    height: 200px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  .listItem div.priceAndCart {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+  }
+  
+  .listItem h1,
+  .listItem p {
+    font-size: 16px;
+    justify-content: center;
+    align-items: center;
+  }
+  .listItem div.priceAndCart svg:hover {
+    font-size: 30px;
+  }
+  
+  @media only screen and (max-width: 1300px) {
+    .listFlo {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  
+  @media only screen and (max-width: 800px) {
+    .listFlo {
+      grid-template-columns: 1fr;
+    }
+  }
+  .pagination {
+    display: inline-block;
+  }
+  
+  .pagination a {
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    border-radius: 5px;
+    border: 1px solid black;
+    margin: 5px;
+
+  }
+  .pagination a.active {
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 5px;
+  }
+  
+  .pagination a:hover:not(.active) {background-color: #ddd;}
+
+  .inputTenHoa {
+    height: 25px;
+    width: 150px;
+    display: block;
+    border-radius: 5px;
+    box-sizing: content-box;
+  }
+  .searchListField {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+    margin-top: 10px;
+  }
+  .searchListField button {
+    height: 30px;
+    background-color: #c6d8c0;
+    width: 35px;
+    border-radius: 5px;
+    margin-left: 10px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+  .searchListField button:hover {
+    background-color: black;
+  }
+  .searchListField button svg {
+    font-size: 22px;
+  }
+  .searchListField button:hover svg {
+    color: white;
+  }
+  

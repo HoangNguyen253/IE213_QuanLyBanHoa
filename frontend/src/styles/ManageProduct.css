@@ -1,0 +1,47 @@
+.manageProductContainer {
+    width: 100%;
+    height: auto;
+    display: grid;
+    place-items: center;
+    background-color: #c6d8c0;
+}
+.addProductMain {
+    animation: rollin 0.5s;
+}
+.addProductMain:invalid {
+  animation: rollout 0.5s;
+}
+@keyframes rollin {
+    0% { transform: translateX(-100vw); }
+    100% { transform: none; }
+  }
+.optionPageField {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border-radius: 10px;
+    margin: 10px;
+}
+.optionPageField button {
+    height: 35px;
+    width: 250px;
+    text-align: center;
+    text-decoration: none;
+    color: black;
+    border-radius: 10px;
+    justify-content: center;
+    line-height: 35px;
+    font-size: 16px;
+    border: 1px solid white;
+    font-weight: 700;
+    background-color: white;
+    cursor: pointer;
+    transition: 0.1s linear;
+}
+.optionPageField button.chosenOption {
+    background-color: #218500;
+    border: 1px solid #218500;
+    color: white;
+    transition: 0.1s linear;
+  }
