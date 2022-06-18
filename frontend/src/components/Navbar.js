@@ -38,6 +38,8 @@ function Navbar() {
                     <Link to="/shop" state={{ maLoaiHoa: '', page: 0, tenHoa: '' }}> Cửa hàng </Link>
                     <Link to="/addproduct"> Thêm mới </Link>
                     <Link to="/manageproduct"> Quản lý hoa </Link>
+                    <Link to="/listorder" state={{page: 0}}> Quản lý đơn hàng </Link>
+                    <Link to="/myorders" state={{page: 0}}> Đơn hàng của tôi </Link>
                     <Link to="/cart"> Giỏ hàng </Link>
                     {(userLogin) ? (<a onClick={() => {
                         reactLocalStorage.remove('user');
@@ -50,6 +52,8 @@ function Navbar() {
                 <Link to="/shop" state={{ maLoaiHoa: '', page: 0, tenHoa: '' }}> Cửa hàng </Link>
                 <Link to="/addproduct"> Thêm mới </Link>
                 <Link to="/manageproduct"> Quản lý hoa </Link>
+                <Link to="/listorder" state={{page: 0}}> Quản lý đơn hàng</Link>
+                <Link to="/myorders" state={{page: 0}}> Đơn hàng của tôi</Link>
                 <Link to="/cart"> Giỏ hàng </Link>
                 {(userLogin) ? (<a onClick={() => {
                     reactLocalStorage.remove('user');

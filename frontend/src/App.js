@@ -9,6 +9,9 @@ import AddProductPage from './pages/AddProduct';
 import ManageProduct from './pages/ManageProduct';
 import ProductBlock from './pages/ProductBlock';
 import LoginSignupPage from './pages/LoginSignupPage';
+import ListOrder from './pages/ListOrder';
+import DetailOrder from './pages/DetailOrderPage';
+import MyOrdersPage from './pages/MyOrdersPage';
 import CartPage from './pages/CartPage';
 import {reactLocalStorage} from 'reactjs-localstorage';
 
@@ -24,6 +27,9 @@ function App() {
           <Route exact path="/addproduct" element={<AddProductPage/>}/>
           <Route exact path="/manageproduct" element={<ManageProduct/>}/>
           <Route exact path="/productblock" element={<ProductBlock/>}/>
+          <Route exact path="/listorder" element={<ListOrder/>}/>
+          <Route exact path="/detailorder" element={<DetailOrder/>}/>
+          <Route exact path="/myorders" element={<MyOrdersPage/>}/>
           <Route exact path="/cart" element={<CartPage/>}/>
           <Route exact path="/loginsignup" element={<LoginSignupPage/>}/>
         </Routes>
