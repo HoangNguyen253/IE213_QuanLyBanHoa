@@ -1,0 +1,74 @@
+.productTableContainer{
+    width: 100%;
+    display: grid;
+    place-items: center;
+    background-color: #c6d8c0;
+    min-height: 60vh;
+}
+.productTableMain {
+    background-color: white;
+    width: 60vw;
+    margin: 20px;
+    padding-top: 10px;
+    border-radius: 10px;
+    position: relative;
+    display: grid;
+    place-items: center;
+}
+.productTableMain::before {
+    content: "";
+    background: url('../assets/cart_background.jpg') no-repeat 100% 50%;
+    background-size: cover;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    opacity: 0.45;
+    border-radius: 10px;
+}
+.productTableMain * {
+    position: relative;
+}
+.productTableMain table {
+    border-collapse: collapse;
+    border: 0.1rem solid black;
+    width: 80%;
+    background-color: white;
+}
+.productTableMain table thead {
+    height: 50px;
+    border-bottom: 1px solid black;
+    background-color: #cecece;
+}
+.productTableMain table tbody tr {
+    border-bottom: 1px solid black;
+}
+.productTableMain table tbody tr td img {
+    width: 80px;
+    height: 100px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+.productTableMain table tbody tr td input {
+    width: 50px;
+    height: 20px;
+    border: 2px solid black;
+}
+.productTableMain table tbody tr td svg {
+    cursor: pointer;
+}
+.productTableMain table tbody tr td svg path {
+    pointer-events: none;
+}
+.productTableMain table tbody tr td a{
+    text-decoration: none;
+    font-weight: 700;
+    color: black;
+}
+.productTableMain table tbody tr td a:hover{
+    color: #218500;
+}
+.productTableMain table tbody tr td a:active{
+    color: black;
+}

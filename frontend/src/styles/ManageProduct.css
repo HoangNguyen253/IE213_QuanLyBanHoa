@@ -5,10 +5,10 @@
     place-items: center;
     background-color: #c6d8c0;
 }
-.addProductMain {
+.manageProductMain {
     animation: rollin 0.5s;
 }
-.addProductMain:invalid {
+.manageProductMain:invalid {
   animation: rollout 0.5s;
 }
 @keyframes rollin {
