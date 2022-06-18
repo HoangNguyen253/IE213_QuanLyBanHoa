@@ -1,0 +1,74 @@
+.categoryTableContainer{
+    width: 100%;
+    display: grid;
+    place-items: center;
+    background-color: #c6d8c0;
+    min-height: 60vh;
+}
+.categoryTableMain {
+    background-color: white;
+    width: 60vw;
+    margin: 20px;
+    padding-top: 10px;
+    border-radius: 10px;
+    position: relative;
+    display: grid;
+    place-items: center;
+}
+.categoryTableMain::before {
+    content: "";
+    background: url('../assets/Background_Form.jpg') no-repeat 100% 50%;
+    background-size: cover;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    opacity: 0.45;
+    border-radius: 10px;
+}
+.categoryTableMain * {
+    position: relative;
+}
+.categoryTableMain select {
+    height: 35px;
+    width: 200px;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+.categoryTableMain select option {
+    height: 35px;
+    width: 200px;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+.categoryTableMain div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.categoryTableMain div p {
+    line-height: 35px;
+    margin-right: 15px;
+}
+.categoryTableMain div input { 
+    height: 35px;
+    border-radius: 5px;
+    border: 1px solid black;
+    margin-left: 15px;
+}
+.categoryTableMain button {
+    height: 35px;
+    width: 200px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    background-color: #218500;
+    color: white;
+    font-weight: 700;
+    border: 1px solid #218500;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.categoryTableMain button:hover {
+    background-color: black;
+}

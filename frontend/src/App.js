@@ -6,6 +6,8 @@ import Home from './pages/Home';
 import Shop from './pages/Shop';
 import DetailItem from './pages/DetailItem';
 import AddProductPage from './pages/AddProduct';
+import ManageProduct from './pages/ManageProduct';
+import ProductBlock from './pages/ProductBlock';
 import LoginSignupPage from './pages/LoginSignupPage';
 import CartPage from './pages/CartPage';
 import { reactLocalStorage } from 'reactjs-localstorage';
@@ -24,7 +26,7 @@ function App() {
     }
     let iFind = -1;
     for (let i = 0; i < cartSave.length; i++) {
-      if (item.maHoa*1 == cartSave[i].maHoa*1) {
+      if (item.maHoa * 1 == cartSave[i].maHoa * 1) {
         iFind = i;
       }
     }
@@ -47,6 +49,8 @@ function App() {
             <Route exact path="/shop" element={<Shop />} />
             <Route exact path="/detailitem" element={<DetailItem />} />
             <Route exact path="/addproduct" element={<AddProductPage />} />
+            <Route exact path="/manageproduct" element={<ManageProduct />} />
+            <Route exact path="/productblock" element={<ProductBlock />} />
             <Route exact path="/cart" element={<CartPage />} />
             <Route exact path="/loginsignup" element={<LoginSignupPage />} />
           </Routes>
