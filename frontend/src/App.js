@@ -10,6 +10,7 @@ import ManageProduct from './pages/ManageProduct';
 import ProductBlock from './pages/ProductBlock';
 import LoginSignupPage from './pages/LoginSignupPage';
 import CartPage from './pages/CartPage';
+import {reactLocalStorage} from 'reactjs-localstorage';
 
 function App() {
   return (
