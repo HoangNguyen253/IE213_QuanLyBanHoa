@@ -4,6 +4,15 @@ import cors from "cors";
 import multer from "multer";
 import session from "express-session";
 import cookieParser from 'cookie-parser';
+import nodemailer from 'nodemailer';
+
+let transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'smtpserverlhn@gmail.com',
+        pass: 'hbbzzruwqzcdknwz'
+    }
+});
 
 let app = express();
 app.use(cors());
@@ -54,19 +63,18 @@ app.get('/api/hoa', async function (req, res) {
     if (req.query.tenhoa) {
         filters.tenhoa = req.query.tenhoa;
     }
-
     let query;
 
-    if (filters) {
-        if (isadminpage == 0) {
+    if (Object.keys(filters).length) {
+        if (isadminpage * 1 == 0) {
             if ("tenhoa" in filters && "maloaihoa" in filters) {
-                query = { $text: { $search: filters['tenhoa'] }, "maloaihoa": { $eq: filters['maloaihoa'] * 1 }, soluong: { $ne: 0 } };
+                query = { $text: { $search: filters['tenhoa'] }, "maloaihoa": { $eq: filters['maloaihoa'] * 1 }, "soluong": { $ne: 0 } };
             } else {
                 if ("tenhoa" in filters) {
-                    query = { $text: { $search: filters['tenhoa'] }, soluong: { $ne: 0 } };
+                    query = { $text: { $search: filters['tenhoa'] }, "soluong": { $ne: 0 } };
                 }
                 if ("maloaihoa" in filters) {
-                    query = { "maloaihoa": { $eq: filters['maloaihoa'] * 1 }, soluong: { $ne: 0 } };
+                    query = { "maloaihoa": { $eq: filters['maloaihoa'] * 1 }, "soluong": { $ne: 0 } };
                 }
             }
         } else {
@@ -81,8 +89,11 @@ app.get('/api/hoa', async function (req, res) {
                 }
             }
         }
+    } else {
+        if (isadminpage * 1 == 0) {
+            query = { "soluong": { $ne: 0 } };
+        }
     }
-
     let cursor;
     let hoas = databaseQLBH.collection("hoa");
     let hoasList = [];
@@ -173,7 +184,7 @@ app.post('/api/themhoa', upload.single("myFile"), async function (req, res) {
         tenhoa: tenHoa,
         giatien: giaTien * 1,
         mota: moTa,
-        hinhanh: "http://localhost:3008/hinhanh" + fileNameUpload,
+        hinhanh: "http://localhost:3008/hinhanh/" + fileNameUpload,
         soluong: soLuong * 1,
         maloaihoa: maLoaiHoa * 1
     }
@@ -290,16 +301,16 @@ app.post('/api/uploadhinhanhhoa', upload.single('myFile'), async function (req, 
             let filter = { mahoa: { $eq: maHoa } };
             let updateDoc = {
                 $set: {
-                    hinhanh: "http://localhost:3008/hinhanh" + fileNameUpload
+                    hinhanh: "http://localhost:3008/hinhanh/" + fileNameUpload
                 }
             };
             try {
-                hoaCollection.updateOne(filter, updateDoc);
+                await hoaCollection.updateOne(filter, updateDoc);
                 res.send({ status: true, message: "Tải ảnh thành công" });
-            } catch(e) {
+            } catch (e) {
                 res.send({ status: false, error: e });
             }
-            
+
         }
 
     }
@@ -943,20 +954,76 @@ app.post('/api/capnhatgiohang', async function (req, res) {
 //1. Thêm đơn hàng -> Thanh toán
 app.post('/api/thanhtoan', async function (req, res) {
     const donHang = req.body;
+    const tenDangNhap = donHang.tenDangNhap;
     const diaChi = donHang.diaChi;
     const tongTien = donHang.tongTien;
     const ctdh = donHang.ctdh;
+    const email = donHang.email;
+    let htmlString = `<h1 style="color:#218500;">CHÀO MỪNG ĐẾN VỚI 4GREEN</span></h1>` +
+        `<h2>Cảm ơn bạn đã đặt hàng!</h2>` +
+        `<p>Chi tiết đơn hàng như sau:</p>` +
+        `<table style="border-collapse:collapse;border:1px solid black;width:50%;text-align:center">` +
+        `<thead>` +
+        `<tr>` +
+        `<th style="border:1px solid black;color:#fff;background-color:#218500">Sản phẩm</th>` +
+        `<th style="border:1px solid black;color:#fff;background-color:#218500">Số lượng</th>` +
+        `<th style="border:1px solid black;color:#fff;background-color:#218500">Đơn giá</th>` +
+        `<th style="border:1px solid black;color:#fff;background-color:#218500">Số tiền</th>` +
+        `</tr>` +
+        `</thead>` +
+        `<tbody>`;
 
     const donHangCollection = databaseQLBH.collection("donhang");
+    const hoaCollection = databaseQLBH.collection("hoa");
     let response;
     try {
-        if (req.session.nguoiDung == undefined) {
-            response = {
-                status: false,
-                error: "Chưa đăng nhập"
+        let cursor = await hoaCollection.find();
+        let listHoa = await cursor.toArray();
+        let ctdhUpdated = [];
+        let check = true;
+        let errorHoaName;
+        let errorHoaSoLuong;
+        for (let i = 0; i < ctdh.length; i++) {
+            for (let j = 0; j < listHoa.length; j++) {
+                if (ctdh[i].maHoa * 1 == listHoa[j].mahoa * 1) {
+                    htmlString += `<tr>` +
+                        `<td style="border:1px solid black">${listHoa[j].tenhoa}</td>` +
+                        `<td style="border:1px solid black">${ctdh[i].soLuong}</td>` +
+                        `<td style="border:1px solid black">${ctdh[i].giaTien / ctdh[i].soLuong}</td>` +
+                        `<td style="border:1px solid black">${ctdh[i].giaTien}</td>` +
+                        `</tr>`;
+                    if (ctdh[i].soLuong * 1 > listHoa[j].soluong * 1) {
+                        check = false;
+                        errorHoaName = listHoa[j].tenhoa;
+                        errorHoaSoLuong = listHoa[j].soluong;
+                        break;
+                    } else {
+
+                        let filter = { mahoa: { $eq: listHoa[j].mahoa } }
+                        let updateDoc = {
+                            $set: {
+                                soluong: (listHoa[j].soluong - ctdh[i].soLuong)
+                            }
+                        }
+                        await hoaCollection.updateOne(filter, updateDoc);
+                        ctdhUpdated.push(ctdh[i]);
+                    }
+                }
             }
-            res.send(response);
-        } else {
+            if (!check) {
+                break;
+            }
+        }
+        htmlString += `</tbody>` +
+            `<tfoot>` +
+            `<tr>` +
+            `<td colspan="3" style="border:1px solid black; font-weight: bold;">TỔNG CỘNG</td>` +
+            `<td style="border:1px solid black; font-weight: bold;">${tongTien * 1}</td>` +
+            `</tr>` +
+            `</tfoot>` +
+            `</table>` +
+            `<p>Hoa sẽ được giao từ 3-5 ngày. Chân thành cảm ơn!</p>`;
+        if (check) {
             let time = new Date();
             let timeString = time.getFullYear() + "-" +
                 (time.getMonth() + 1) + "-" +
@@ -965,7 +1032,7 @@ app.post('/api/thanhtoan', async function (req, res) {
                 time.getMinutes() + ":" +
                 time.getSeconds();
             let donHangOBJ = {
-                tendangnhap: req.session.nguoiDung.tendangnhap,
+                tendangnhap: tenDangNhap,
                 diachi: diaChi,
                 tongtien: tongTien * 1,
                 thoigiandat: timeString,
@@ -973,9 +1040,42 @@ app.post('/api/thanhtoan', async function (req, res) {
                 ctdh: ctdh
             }
             await donHangCollection.insertOne(donHangOBJ);
+            let mailOptions = {
+                from: 'smtpserverlhn@gmail.com',
+                to: email,
+                subject: 'Đặt hàng thành công',
+                html: htmlString
+            }
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log('Email sent: ' + info.response);
+                }
+            });
             response = {
                 status: true,
                 message: "Thanh toán thành công"
+            }
+            res.send(response);
+        } else {
+            for (let i = 0; i < ctdhUpdated.length; i++) {
+                for (let j = 0; j < listHoa.length; j++) {
+                    if (ctdhUpdated[i].maHoa * 1 == listHoa[j].mahoa * 1) {
+                        let filter = { mahoa: { $eq: listHoa[j].mahoa } }
+                        let updateDoc = {
+                            $set: {
+                                soluong: (listHoa[j].soluong)
+                            }
+                        }
+                        await hoaCollection.updateOne(filter, updateDoc);
+                    }
+                }
+            }
+
+            response = {
+                status: false,
+                error: `${errorHoaName} chỉ có sẵn ${errorHoaSoLuong}`
             }
             res.send(response);
         }
@@ -1103,16 +1203,17 @@ app.get('/api/chitietdonhang', async function (req, res) {
 app.get('/api/donhangnguoidung', async function (req, res) {
     const donhangPerPage = req.query.donhangPerPage ? parseInt(req.query.donhangPerPage) : 10;
     const page = req.query.page ? parseInt(req.query.page) : 0;
+    const tenDangNhap = req.query.tenDangNhap;
 
     let response;
-    if (req.session.nguoiDung == undefined) {
+    if (tenDangNhap == null) {
         response = {
             status: false,
             error: "Chưa đăng nhập"
         };
         res.send(response);
     } else {
-        let query = { tendangnhap: { $eq: req.session.nguoiDung.tendangnhap } }
+        let query = { tendangnhap: { $eq: tenDangNhap } }
 
         let cursor;
         let donHangCollection = databaseQLBH.collection("donhang");
@@ -1130,7 +1231,7 @@ app.get('/api/donhangnguoidung', async function (req, res) {
         response = {
             donHangList: donHangList,
             page: page,
-            tenDangNhap: req.session.nguoiDung.tendangnhap,
+            tenDangNhap: tenDangNhap,
             entries_per_page: donhangPerPage,
             total_results: totalNumDonHang,
         };
