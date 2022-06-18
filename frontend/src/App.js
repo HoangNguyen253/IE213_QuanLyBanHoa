@@ -8,6 +8,7 @@ import DetailItem from './pages/DetailItem';
 import AddProductPage from './pages/AddProduct';
 import LoginSignupPage from './pages/LoginSignupPage';
 import CartPage from './pages/CartPage';
+import {reactLocalStorage} from 'reactjs-localstorage';
 
 function App() {
   return (

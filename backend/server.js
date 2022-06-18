@@ -1,18 +1,21 @@
 import mongodb from "mongodb";
-import express, { query } from "express";
+import express from "express";
 import cors from "cors";
 import multer from "multer";
 import session from "express-session";
-import e from "express";
+import cookieParser from 'cookie-parser';
 
 let app = express();
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
+let MemoryStore = session.MemoryStore;
 app.use(session({
     resave: true,
     saveUninitialized: true,
     secret: '1234567abc',
-    cookie: { maxAge: 60000 }
+    store: new MemoryStore(),
+    cookie: { maxAge: 600000 }
 })
 );
 
@@ -594,7 +597,7 @@ app.get('/api/checktendangnhap', async function (req, res) {
 });
 
 //3. Login
-app.post('/api/login', async function (req, res) {
+app.use('/api/login', async function (req, res) {
     const tenDangNhap = req.query.tenDangNhap;
     const matKhau = req.query.matKhau;
 
