@@ -173,7 +173,7 @@ app.post('/api/themhoa', upload.single("myFile"), async function (req, res) {
         tenhoa: tenHoa,
         giatien: giaTien * 1,
         mota: moTa,
-        hinhanh: fileNameUpload,
+        hinhanh: "http://localhost:3008/hinhanh" + fileNameUpload,
         soluong: soLuong * 1,
         maloaihoa: maLoaiHoa * 1
     }
@@ -272,12 +272,38 @@ app.post('/api/suahoa', async function (req, res) {
 
 //4. upload image
 app.post('/api/uploadhinhanhhoa', upload.single('myFile'), async function (req, res) {
-    const file = req.file;
-    if (!file) {
-        res.send({ status: false, message: "Hãy tải 1 file ảnh" });
+    const maHoa = req.query.maHoa;
+
+    let response;
+    if (maHoa == null) {
+        response = {
+            status: false,
+            error: "Hãy nhập mã hoa"
+        }
+        res.send(response);
     } else {
-        res.send({ status: true, message: "Tải ảnh thành công" });
+        const file = req.file;
+        if (!file) {
+            res.send({ status: false, message: "Hãy tải 1 file ảnh" });
+        } else {
+            const hoaCollection = databaseQLBH.collection("hoa");
+            let filter = { mahoa: { $eq: maHoa } };
+            let updateDoc = {
+                $set: {
+                    hinhanh: "http://localhost:3008/hinhanh" + fileNameUpload
+                }
+            };
+            try {
+                hoaCollection.updateOne(filter, updateDoc);
+                res.send({ status: true, message: "Tải ảnh thành công" });
+            } catch(e) {
+                res.send({ status: false, error: e });
+            }
+            
+        }
+
     }
+
 });
 //5. lấy hoa theo mã hoa
 app.get('/api/gethoabyma', async function (req, res) {
@@ -970,7 +996,7 @@ app.get('/api/quanlydonhang', async function (req, res) {
 
     let query;
     if (req.query.trangThai) {
-        query = {trangthai : {$eq: req.query.trangThai*1}}
+        query = { trangthai: { $eq: req.query.trangThai * 1 } }
     }
 
     let cursor;
@@ -1002,7 +1028,7 @@ app.post('/api/suadonhang', async function (req, res) {
     const trangThaiMoi = req.query.trangThai;
 
     let response;
-    if (maDonHang== null || trangThaiMoi == null) {
+    if (maDonHang == null || trangThaiMoi == null) {
         response = {
             status: false,
             error: "Hãy nhập đầy đủ các trường"
@@ -1010,10 +1036,10 @@ app.post('/api/suadonhang', async function (req, res) {
         res.send(response);
     } else {
         const donHangCollection = databaseQLBH.collection("donhang");
-        let filter = {madonhang: {$eq: maDonHang*1}};
+        let filter = { madonhang: { $eq: maDonHang * 1 } };
         let updateDoc = {
             $set: {
-                trangthai: trangThaiMoi*1
+                trangthai: trangThaiMoi * 1
             }
         }
         try {
@@ -1021,20 +1047,20 @@ app.post('/api/suadonhang', async function (req, res) {
             response = {
                 status: true,
                 message: "Sửa trạng thái thành công"
-            }; 
+            };
             res.send(response);
-        } catch(e) {
+        } catch (e) {
             response = {
                 status: false,
                 error: e
-            }; 
+            };
             res.send(response);
         }
     }
 });
 
 //4. Get chi tiết đơn hàng từ mã đơn hàng
-app.get('/api/chitietdonhang', async function(req, res) {
+app.get('/api/chitietdonhang', async function (req, res) {
     const maDonHang = req.query.maDonHang;
 
     let response;
@@ -1042,34 +1068,34 @@ app.get('/api/chitietdonhang', async function(req, res) {
         response = {
             status: false,
             error: "Nhập mã đơn hàng"
-        }; 
+        };
         res.send(response);
     } else {
         try {
             const donHangCollection = databaseQLBH.collection("donhang");
-            let query = {madonhang: {$eq: maDonHang*1}};
+            let query = { madonhang: { $eq: maDonHang * 1 } };
             let donHang = await donHangCollection.findOne(query);
             if (donHang == null) {
                 response = {
                     status: false,
                     error: "Mã đơn hàng không tồn tại"
-                }; 
+                };
                 res.send(response);
             } else {
                 response = {
                     status: true,
                     donHang: donHang
-                }; 
+                };
                 res.send(response);
             }
-        } catch(e) {
+        } catch (e) {
             response = {
                 status: false,
                 error: e
-            }; 
+            };
             res.send(response);
         }
-        
+
     }
 });
 
@@ -1083,11 +1109,11 @@ app.get('/api/donhangnguoidung', async function (req, res) {
         response = {
             status: false,
             error: "Chưa đăng nhập"
-        }; 
+        };
         res.send(response);
     } else {
-        let query = {tendangnhap : {$eq: req.session.nguoiDung.tendangnhap}}
-    
+        let query = { tendangnhap: { $eq: req.session.nguoiDung.tendangnhap } }
+
         let cursor;
         let donHangCollection = databaseQLBH.collection("donhang");
         let donHangList = [];
@@ -1100,7 +1126,7 @@ app.get('/api/donhangnguoidung', async function (req, res) {
         catch (e) {
             console.error(`Lỗi lấy danh sách hoa, ${e}`);
         }
-    
+
         response = {
             donHangList: donHangList,
             page: page,
@@ -1109,7 +1135,7 @@ app.get('/api/donhangnguoidung', async function (req, res) {
             total_results: totalNumDonHang,
         };
         res.json(response);
-    }   
+    }
 });
 
 /*END ====================DONHANG API======================*/
