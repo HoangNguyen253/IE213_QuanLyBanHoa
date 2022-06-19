@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../styles/DetailOrderPage.css"
+import "../styles/MyDetailOrderPage.css"
 import Inventory2SharpIcon from '@mui/icons-material/Inventory2Sharp';
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
@@ -15,7 +15,7 @@ function formatGiaTien(giaTien) {
     }
     return giaTienAfter;
   }
-function DetailOrder() {
+function MyDetailOrderPage() {
     const location = useLocation();
     const [orderData, setOrder] = useState({});
     const [dsHoa, setHoaList] = useState([]);
@@ -52,14 +52,6 @@ function DetailOrder() {
     function getDataSanPham(maHoa) {
         return dsHoa.find(element => { return element.mahoa == maHoa })
     }
-    function updateDonHang() {
-        axios.post("http://localhost:3008/api/suadonhang?maDonHang=" + maDonHang+"&trangThai=" + orderData.trangthai).then(
-            res => {
-                console.log(res.data);
-                (res.data.status) ? alert("Cập nhật trạng thái đơn hàng thành công!") : alert("Cập nhật trạng thái đơn hàng thất bại!")
-            }
-        );
-    }
     let dsDetailOrderHienThiComponent = listItem.map((detail, index) => {
         let sanPham = getDataSanPham(detail.maHoa);
         return (
@@ -73,25 +65,18 @@ function DetailOrder() {
             </tr>
         );
     })
-    let trangThaiDonHangComponent = trangThaiDonHang.map((tt, index) => {
-        return (
-            <option value={index + 1}>{tt}</option>
-        )
-    })
     return (
-        <div className="detailOrderPageContainer">
+        <div className="myDetailOrderPageContainer">
 
-            {(listItem.length>0) ? <div className="detailOrderPageMain">
+            {(listItem.length>0) ? <div className="myDetailOrderPageMain">
                 <h3>CHI TIẾT ĐƠN HÀNG</h3>
-                <div className="detailOrderHeader">
+                <div className="myDetailOrderHeader">
                     <div>Mã đơn hàng: <b>{orderData.madonhang}</b></div>
                     <div>Khách hàng: <b>{orderData.tendangnhap}</b></div>
                     <div>Địa chỉ: <b>{orderData.diachi}</b></div>
                     <div>Thời gian đặt: <b>{orderData.thoigiandat}</b></div>
                     <div>Tổng tiền: <b>{formatGiaTien(String(orderData.tongtien))} VNĐ</b></div>
-                    <div>Trạng thái: <select value={orderData.trangthai} onChange={(e) => setOrder(preState => ({ ...preState, trangthai: e.target.value }))}>
-                        {trangThaiDonHangComponent}
-                    </select></div>
+                    <div>Trạng thái: <b>{trangThaiDonHang[orderData.trangthai-1]}</b></div>
 
                 </div>
                 <table>
@@ -125,11 +110,11 @@ function DetailOrder() {
                         {dsDetailOrderHienThiComponent}
                     </tbody>
                 </table>
-                <button onClick={updateDonHang}>Cập nhật đơn hàng</button>
-            </div> : <div className="detailOrderPageContainer">
+                {/* <button onClick={updateDonHang}>Cập nhật đơn hàng</button> */}
+            </div> : <div className="myDetailOrderPageContainer">
                 <h3>CHI TIẾT ĐƠN HÀNG</h3><div className="noCartDiv"><Inventory2SharpIcon />Chưa có đơn hàng nào!</div> </div>}
         </div>
     )
 }
 
-export default DetailOrder;
+export default MyDetailOrderPage;

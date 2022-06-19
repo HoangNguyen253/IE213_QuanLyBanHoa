@@ -8,23 +8,29 @@ import { reactLocalStorage } from 'reactjs-localstorage';
 
 function Navbar() {
     const [openLinks, setOpenLinks] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
     const [userLogin, setUser] = useState(null);
     function getUserInLocal() {
-        let userSave = reactLocalStorage.getObject('user');
-        console.log(userLogin, " ", userSave);
-        if (Object.keys(userSave).length) {
-            if (userLogin) {
-                if(!(userLogin.tendangnhap == userSave.tendangnhap
-                ||  userLogin.matkhau == userSave.matkhau)) {
+        return new Promise(function (myResolve) {
+            let userSave = reactLocalStorage.getObject('user');
+            console.log(userLogin, " ", userSave);
+            if (Object.keys(userSave).length) {
+                if (userLogin) {
+                    if (!(userLogin.tendangnhap == userSave.tendangnhap
+                        || userLogin.matkhau == userSave.matkhau)) {
+                        setUser(reactLocalStorage.getObject('user'));
+                    }
+                } else {
                     setUser(reactLocalStorage.getObject('user'));
                 }
-            } else{
-                setUser(reactLocalStorage.getObject('user'));
+                myResolve('');
             }
-        }
+        })
     }
     useEffect(() => {
-        getUserInLocal();
+        getUserInLocal().then(function (value) {
+            (userLogin != null) ? (userLogin.maloainguoidung === 2) ? setIsAdmin(false) : setIsAdmin(true) : setIsAdmin(false);
+        });
     });
     const toggleNavbar = () => {
         setOpenLinks(!openLinks);
@@ -35,12 +41,9 @@ function Navbar() {
                 <img src={Logo} alt="Logo"></img>
                 <div className="hiddenLinks">
                     <Link to="/"> Trang chủ </Link>
-                    <Link to="/shop" state={{ maLoaiHoa: '', page: 0, tenHoa: '' }}> Cửa hàng </Link>
-                    <Link to="/addproduct"> Thêm mới </Link>
-                    <Link to="/manageproduct"> Quản lý hoa </Link>
-                    <Link to="/listorder" state={{page: 0}}> Quản lý đơn hàng </Link>
-                    <Link to="/myorders" state={{page: 0}}> Đơn hàng của tôi </Link>
-                    <Link to="/cart"> Giỏ hàng </Link>
+                    {(isAdmin) ? <Link to="/addproduct"> Thêm mới </Link> : <Link to="/shop" state={{ maLoaiHoa: '', page: 0, tenHoa: '' }}> Cửa hàng </Link>}
+                    {(isAdmin) ? <Link to="/manageproduct"> Quản lý hoa </Link> : <Link to="/myorders" state={{ page: 0, tendangnhap:  (userLogin == null) ? '' : userLogin.tendangnhap}}> Đơn hàng của tôi </Link>}
+                    {(isAdmin) ? <Link to="/listorder" state={{ page: 0 }}> Quản lý đơn hàng </Link> : <Link to="/cart"> Giỏ hàng </Link>}
                     {(userLogin) ? (<a onClick={() => {
                         reactLocalStorage.remove('user');
                         setUser(null);
@@ -49,12 +52,9 @@ function Navbar() {
             </div>
             <div className="rightSide">
                 <Link to="/"> Trang chủ </Link>
-                <Link to="/shop" state={{ maLoaiHoa: '', page: 0, tenHoa: '' }}> Cửa hàng </Link>
-                <Link to="/addproduct"> Thêm mới </Link>
-                <Link to="/manageproduct"> Quản lý hoa </Link>
-                <Link to="/listorder" state={{page: 0}}> Quản lý đơn hàng</Link>
-                <Link to="/myorders" state={{page: 0}}> Đơn hàng của tôi</Link>
-                <Link to="/cart"> Giỏ hàng </Link>
+                {(isAdmin) ? <Link to="/addproduct"> Thêm mới </Link> : <Link to="/shop" state={{ maLoaiHoa: '', page: 0, tenHoa: '' }}> Cửa hàng </Link>}
+                {(isAdmin) ? <Link to="/manageproduct"> Quản lý hoa </Link> : <Link to="/myorders" state={{ page: 0, tendangnhap:  (userLogin == null) ? '' : userLogin.tendangnhap }}> Đơn hàng của tôi</Link>}
+                {(isAdmin) ? <Link to="/listorder" state={{ page: 0 }}> Quản lý đơn hàng</Link> : <Link to="/cart"> Giỏ hàng </Link>}
                 {(userLogin) ? (<a onClick={() => {
                     reactLocalStorage.remove('user');
                     setUser(null);

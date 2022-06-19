@@ -12,6 +12,7 @@ function ProductBlock() {
   const [hoaOnPage, setHoa] = useState({});
   const [dsLoaiHoa, setLoaiHoaList] = useState([]);
   const [isEnableUpdate, setEnableUpdate] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
   const callAPIGetHoaByID = () => {
     axios.get("http://localhost:3008/api/gethoabyma?maHoa=" + maHoaOnPage).then(
       res => {
@@ -50,7 +51,26 @@ function ProductBlock() {
       );
   }
   function updateAnhHoa() {
-    
+    if (selectedFile != null) {
+      let formData = new FormData();
+      formData.append("myFile", selectedFile);
+      axios.post("http://localhost:3008/api/uploadhinhanhhoa?maHoa=" + hoaOnPage.mahoa, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }).then(
+        res => {
+          console.log(res.data);
+          if (res.data.status) {
+            alert("Thêm thành công!");
+            setHoa(preState => ({ ...preState, hinhanh: res.data.hinhanh }));
+          }
+        }
+      )
+    }
+  }
+  const handleFileSelect = (event) => {
+    setSelectedFile(event.target.files[0])
   }
   return (
     <div className="updateProductFormBack">
@@ -58,11 +78,11 @@ function ProductBlock() {
         <h2>THÔNG TIN BÓ HOA</h2>
         <div className="updateProductForm">
           <div className="updateProductData">
-            <img src={hoaOnPage.hinhanh} alt='hinh'></img>
+            <img src={hoaOnPage.hinhanh} alt='hinh' style={{width: "250px"}}></img>
           </div>
           <div className="updateProductData">
-            <p>Hình ảnh</p> <input type={"file"} style={{width: "50%"}}></input>
-            <button style={{width: "50px", marginLeft:"10px"}}>Sửa</button>
+            <p>Hình ảnh</p> <input type={"file"} style={{ width: "50%" }} files={selectedFile} name="myFile" onChange={handleFileSelect}></input>
+            <button style={{ width: "50px", marginLeft: "10px" }} onClick={updateAnhHoa}>Sửa</button>
           </div>
           <div className="updateProductData">
             <p>Tên bó hoa</p> <input type={"text"} value={hoaOnPage.tenhoa} onChange={(e) => { setHoa(preState => ({ ...preState, tenhoa: e.target.value })) }}></input>

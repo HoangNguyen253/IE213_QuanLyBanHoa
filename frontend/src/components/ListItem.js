@@ -4,6 +4,17 @@ import { useNavigate, Navigate } from "react-router-dom";
 import axios from "axios";
 import { reactLocalStorage } from "reactjs-localstorage";
 import { cartContext } from "../App";
+function formatGiaTien(giaTien) {
+  let giaTienAfter = "";
+  let len = giaTien.length;
+  for (let j = 1; j <= len; j++) {
+      giaTienAfter = giaTien[len - j] + giaTienAfter;
+      if (j % 3 == 0 && j != len) {
+          giaTienAfter = "." + giaTienAfter;
+      }
+  }
+  return giaTienAfter;
+}
 function ListItem({ imgLink, tenHoa, giaTien, maHoa, maLoaiHoa }) {
   let navigate = useNavigate();
   const {addToCart} = React.useContext(cartContext);
@@ -22,7 +33,7 @@ function ListItem({ imgLink, tenHoa, giaTien, maHoa, maLoaiHoa }) {
       <div className="imgItem" style={{ backgroundImage: `url(${imgLink})` }}> </div>
       <h1> {tenHoa} </h1>
       <div className="priceAndCart">
-        <p> {giaTien}đ</p>
+        <p> {formatGiaTien(String(giaTien))} VNĐ</p>
         <ShoppingCartIcon onClick={(e) => {
           callAPIGetHoaByID(maHoa).then(function (hoa) {
             let cartSave = reactLocalStorage.get("cart");

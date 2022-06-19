@@ -4,6 +4,17 @@ import Inventory2SharpIcon from '@mui/icons-material/Inventory2Sharp';
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 const trangThaiDonHang = ["Vừa đặt", "Hủy đơn", "Đang giao", "Hoàn thành"]
+function formatGiaTien(giaTien) {
+    let giaTienAfter = "";
+    let len = giaTien.length;
+    for (let j = 1; j <= len; j++) {
+        giaTienAfter = giaTien[len - j] + giaTienAfter;
+        if (j % 3 == 0 && j != len) {
+            giaTienAfter = "." + giaTienAfter;
+        }
+    }
+    return giaTienAfter;
+  }
 function ListOrder() {
     const location = useLocation();
     const [totalOrders, setTotalOrders] = useState(0);
@@ -39,7 +50,7 @@ function ListOrder() {
                 <td>{order.madonhang}</td>
                 <td>{order.tendangnhap}</td>
                 <td>{order.diachi}</td>
-                <td>{order.tongtien}đ</td>
+                <td>{formatGiaTien(String(order.tongtien))}</td>
                 <td>{order.thoigiandat}</td>
                 <Link to="/detailorder" state={{maDonHang: order.madonhang}}><td>{trangThaiDonHang[order.trangthai-1]}</td> </Link>
             </tr>
@@ -91,7 +102,7 @@ function ListOrder() {
                             <th>Mã đơn hàng</th>
                             <th>Khách hàng</th>
                             <th>Địa chỉ</th>
-                            <th>Tổng tiền</th>
+                            <th>Tổng tiền (VNĐ)</th>
                             <th>Thời gian đặt</th>
                             <th>Trạng thái</th>
                         </tr>

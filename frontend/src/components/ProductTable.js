@@ -3,7 +3,17 @@ import "../styles/ProductTable.css"
 import LocalFloristIcon from '@mui/icons-material/LocalFlorist';
 import { Link } from "react-router-dom";
 import axios from "axios";
-
+function formatGiaTien(giaTien) {
+    let giaTienAfter = "";
+    let len = giaTien.length;
+    for (let j = 1; j <= len; j++) {
+        giaTienAfter = giaTien[len - j] + giaTienAfter;
+        if (j % 3 == 0 && j != len) {
+            giaTienAfter = "." + giaTienAfter;
+        }
+    }
+    return giaTienAfter;
+  }
 function ProductTable() {
     const [dsHoa, setHoaList] = useState([]);
     const [dsLoaiHoa, setLoaiHoaList] = useState([]);
@@ -41,7 +51,7 @@ function ProductTable() {
                 <td><img src={hoa.hinhanh} alt="hinh"/></td>
                 <td><Link to={"/productblock"} state={{maHoa: hoa.mahoa}}>{hoa.tenhoa}</Link></td>
                 <td>{getTenMaLoai(hoa.maloaihoa)}</td>
-                <td>{hoa.giatien}</td>
+                <td>{formatGiaTien(String(hoa.giatien))}</td>
                 <td>{hoa.soluong}</td>
             </tr>
         )
@@ -65,7 +75,7 @@ function ProductTable() {
                             <th></th>
                             <th>Sản phẩm</th>
                             <th>Loại</th>
-                            <th>Giá</th>
+                            <th>Giá (VNĐ)</th>
                             <th>Số lượng</th>
                         </tr>
                     </thead>

@@ -4,7 +4,17 @@ import { useLocation, useNavigate } from "react-router-dom";
 import "../styles/DetailItem.css";
 import { reactLocalStorage } from "reactjs-localstorage";
 import { cartContext } from "../App";
-
+function formatGiaTien(giaTien) {
+    let giaTienAfter = "";
+    let len = giaTien.length;
+    for (let j = 1; j <= len; j++) {
+        giaTienAfter = giaTien[len - j] + giaTienAfter;
+        if (j % 3 == 0 && j != len) {
+            giaTienAfter = "." + giaTienAfter;
+        }
+    }
+    return giaTienAfter;
+  }
 function DetailItem() {
     const { addToCart } = React.useContext(cartContext);
     const location = useLocation();
@@ -48,7 +58,7 @@ function DetailItem() {
                 <img src={hoaHienThi.hinhanh}></img>
                 <div className="detailItem">
                     <h2>{hoaHienThi.tenhoa}</h2>
-                    <h3>{hoaHienThi.giatien} đ</h3>
+                    <h3>{formatGiaTien(String(hoaHienThi.giatien))} VNĐ</h3>
                     <p>{hoaHienThi.mota}</p>
                     <h4>Có sẵn: <em>{hoaHienThi.soluong}</em> hàng</h4>
                     <h4>Danh mục: <em>{loaiHoaHienThi.tenloaihoa}</em></h4>

@@ -5,7 +5,6 @@ import DeleteSharpIcon from '@mui/icons-material/DeleteSharp';
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { reactLocalStorage } from "reactjs-localstorage";
-import $ from "jquery";
 function CartPage() {
     const [listItem, setListItem] = useState([]);
     const [renderCart, setRenderCart] = useState(null);

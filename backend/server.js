@@ -28,6 +28,8 @@ app.use(session({
 })
 );
 
+app.use('/hinhanh', express.static('hinhanh'));
+
 app.get('/', function (req, res) {
     res.send('Chào Các Bạn');
 });
@@ -298,7 +300,7 @@ app.post('/api/uploadhinhanhhoa', upload.single('myFile'), async function (req, 
             res.send({ status: false, message: "Hãy tải 1 file ảnh" });
         } else {
             const hoaCollection = databaseQLBH.collection("hoa");
-            let filter = { mahoa: { $eq: maHoa } };
+            let filter = { mahoa: { $eq: maHoa*1 } };
             let updateDoc = {
                 $set: {
                     hinhanh: "http://localhost:3008/hinhanh/" + fileNameUpload
@@ -306,7 +308,7 @@ app.post('/api/uploadhinhanhhoa', upload.single('myFile'), async function (req, 
             };
             try {
                 await hoaCollection.updateOne(filter, updateDoc);
-                res.send({ status: true, message: "Tải ảnh thành công" });
+                res.send({ status: true, message: "Tải ảnh thành công",  hinhanh: "http://localhost:3008/hinhanh/" + fileNameUpload});
             } catch (e) {
                 res.send({ status: false, error: e });
             }

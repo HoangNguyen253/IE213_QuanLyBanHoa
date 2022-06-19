@@ -1,0 +1,134 @@
+.myDetailOrderPageContainer{
+    width: 100%;
+    display: grid;
+    place-items: center;
+    background-color: #c6d8c0;
+    min-height: 60vh;
+}
+.myDetailOrderPageMain {
+    background-color: white;
+    width: 80vw;
+    margin: 20px;
+    padding-top: 10px;
+    border-radius: 10px;
+    position: relative;
+    display: grid;
+    place-items: center;
+}
+.myDetailOrderPageMain::before {
+    content: "";
+    background: url('../assets/cart_background.jpg') no-repeat 100% 50%;
+    background-size: cover;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    opacity: 0.45;
+    border-radius: 10px;
+}
+.myDetailOrderPageMain * {
+    position: relative;
+}
+.myDetailOrderHeader {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    text-align: left;
+    margin-bottom: 20px;
+}
+.myDetailOrderHeader div {
+    margin-bottom: 10px;
+}
+.myDetailOrderHeader div select {
+    border-radius: 5px;
+    height: 30px;
+    width: 50%;
+}
+.noCartDiv {
+    position: relative;
+    background-color: white;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    height: 50px;
+    line-height: 50px;
+    border-radius: 10px;
+    width: 350px;
+    margin: 20px;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+.myDetailOrderPageMain table {
+    border-collapse: collapse;
+    border: 0.1rem solid black;
+    width: 80%;
+    background-color: white;
+}
+.myDetailOrderPageMain table thead {
+    height: 50px;
+    border-bottom: 1px solid black;
+    background-color: #cecece;
+}
+.myDetailOrderPageMain table tbody tr {
+    border-bottom: 1px solid black;
+    height: 50px;
+}
+.myDetailOrderPageMain table tbody tr a {
+    line-height: 50px;
+}
+.myDetailOrderPageMain table tbody tr td img {
+    width: 80px;
+    height: 100px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+.myDetailOrderPageMain table tbody tr td input {
+    width: 50px;
+    height: 20px;
+    border: 2px solid black;
+}
+.myDetailOrderPageMain table tbody tr td svg {
+    cursor: pointer;
+}
+.myDetailOrderPageMain table tbody tr td svg path {
+    pointer-events: none;
+}
+.myDetailOrderPageMain table tbody tr td button {
+    height: 35px;
+    width: 200px;
+    background-color: #218500;
+    color: white;
+    font-weight: 700;
+    border: 1px solid #218500;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 10px;
+}
+.myDetailOrderPageMain table tbody tr td button:hover{
+    background-color: black;
+}
+.myDetailOrderPageMain table tbody tr td a{
+    text-decoration: none;
+    font-weight: 700;
+    color: black;
+}
+.myDetailOrderPageMain table tbody tr td a:hover{
+    color: #218500;
+}
+.myDetailOrderPageMain table tbody tr td a:active{
+    color: black;
+}
+.myDetailOrderPageMain button {
+    height: 35px;
+    width: 200px;
+    background-color: #218500;
+    color: white;
+    font-weight: 700;
+    border: 1px solid #218500;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 10px;
+}
+.myDetailOrderPageMain button:hover {
+    background-color: black;
+}
